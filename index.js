@@ -1,3 +1,3 @@
-const a=1234567
+const a = 1234567;
 
-console.log(a)
+console.log(a);
