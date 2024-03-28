@@ -1,42 +1,17 @@
-name: CI
+name: Super-Linter
 
-on:
-  push:
-    branches: [ "dev" ]
-  pull_request:
-    branches: [ "dev" ]
-  workflow_dispatch:
+on: push
 
 jobs:
-  build:
+  super-lint:
+    name: Lint code base
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    # Example step: Dummy test command. Replace this with your actual test command.
-    # This command exits with 1 (error) to simulate a test failure.
-    # In your real workflow, replace it with your actual test command, e.g., `npm test`.
-    - name: Run tests
-      id: run-tests
-      run: |
-        echo "Running tests..."
-        (exit 1) # Simulate test failure. Replace with your actual test command.
-
-      # If the tests step fails, this step will not stop the workflow
-      continue-on-error: true
-
-    # Post a comment on the PR based on the test results
-    - name: Comment PR based on test results
-      if: always()
-      uses: actions/github-script@v5
-      with:
-        script: |
-          const testSuccess = ${{ steps.run-tests.outcome }} === 'success';
-          const commentBody = testSuccess ? '+1 Tests passed.' : '-1 Tests failed.';
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: commentBody
-          });
+      - name: Run Super-Linter
+        uses: github/super-linter@v4
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
